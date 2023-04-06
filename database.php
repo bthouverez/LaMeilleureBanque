@@ -56,25 +56,69 @@ function getAccount($id) {
 
 function addToAccount($id, $amount) {
 	$bdd = connectDB();
-	$sql = 'SELECT * FROM Accounts WHERE id = ?';
+	$sql = 'SELECT * FROM accounts WHERE id = ?';
 	$query = $bdd->prepare($sql);
 	$query->execute(array($id));
 	$data = $query->fetch();
 	$money = $data['money'] + $amount;
-	$sql = 'UPDATE Accounts SET money = ? WHERE id = ?';
+	$sql = 'UPDATE accounts SET money = ? WHERE id = ?';
 	$query = $bdd->prepare($sql);
 	$query->execute(array($money, $id));
 }
 
 function subToAccount($id, $amount) {
 	$bdd = connectDB();
-	$sql = 'SELECT * FROM Accounts WHERE id = ?';
+	$sql = 'SELECT * FROM accounts WHERE id = ?';
 	$query = $bdd->prepare($sql);
 	$query->execute(array($id));
 	$data = $query->fetch();
 	$money = $data['money'] - $amount;
-	$sql = 'UPDATE Accounts SET money = ? WHERE id = ?';
+	$sql = 'UPDATE accounts SET money = ? WHERE id = ?';
 	$query = $bdd->prepare($sql);
 	$query->execute(array($money, $id));
 }
 
+function makeTransfer($from, $to, $amount) {
+	subToAccount($from, $amount);
+	addToAccount($to, $amount);
+	$bdd = connectDB();
+	$sql = 'INSERT INTO transfers VALUES (NULL, ?, ?, ?, NOW())';
+	$query = $bdd->prepare($sql);
+	$query->execute(array($from, $to, $amount));
+}
+
+function getTransfersFrom($account) {
+	$bdd = connectDB();
+	$sql = 'SELECT * FROM transfers WHERE account_from = ?';
+	$query = $bdd->prepare($sql);
+	$query->execute(array($account));
+	$data = $query->fetchAll();
+	return $data;
+}
+
+function getTransfersTo($account) {
+	$bdd = connectDB();
+	$sql = 'SELECT * FROM transfers WHERE account_to = ?';
+	$query = $bdd->prepare($sql);
+	$query->execute(array($account));
+	$data = $query->fetchAll();
+	return $data;
+}
+
+function getAllTransfers($account) {
+	$bdd = connectDB();
+	$sql = 'SELECT * FROM transfers WHERE account_to = ? OR account_from = ? ORDER BY date DESC';
+	$query = $bdd->prepare($sql);
+	$query->execute(array($account, $account));
+	$data = $query->fetchAll();
+	return $data;
+}
+
+function getAdvisor($user_id) {
+	$bdd = connectDB();
+	$sql = 'SELECT * FROM Advisor WHERE user_id = ?';
+	$query = $bdd->prepare($sql);
+	$query->execute(array($user_id));
+	$data = $query->fetch();
+	return $data;
+}

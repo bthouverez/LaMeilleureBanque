@@ -5,6 +5,7 @@ session_start();
 if(!isset($_SESSION['username'])) header('Location: index.php');
 
 $accounts = getAccounts($_SESSION['id']);
+$advisor = getAdvisor($_SESSION['id']);
 ?>
 
 <!DOCTYPE html>
@@ -22,6 +23,16 @@ $accounts = getAccounts($_SESSION['id']);
         <div class="shape"></div>
         <br>
 		<h1>Bonjour <?= $_SESSION['username'] ?></h1>
+		<?php if($advisor) { ?>
+			<a href="contact-advisor.php">
+				<div id="advisor">
+					Prenez rendez-vous avec votre conseiller : <?= $advisor['name'] ?>
+				</div>
+			</a>
+			<br>
+
+		<?php } ?>
+		<br>
 		<h2>Vos comptes bancaires</h2>
 
 		<section id="accounts">
@@ -38,6 +49,7 @@ $accounts = getAccounts($_SESSION['id']);
 			<?php } ?>
 		</section>
     </div>
+    <a href="index.php?deco"><button class="btnDeco">Déconnexion</button></a>
 
 </body>
 </html>

@@ -4,6 +4,15 @@ session_start();
 
 $error = null;
 
+if(isset($_GET['deco'])) {
+	session_destroy();
+}
+
+
+if(isset($_SESSION['username'])) {
+	header('Location: comptes.php');
+}
+
 if(isset($_POST['btnConnect'])) {
 	if(isset($_POST['username']) AND $_POST['username'] != '') {
 		if(isset($_POST['password']) AND $_POST['password'] != '') {
@@ -36,9 +45,11 @@ if(isset($_POST['btnConnect'])) {
         <div class="shape"></div>
     </div>
     <form method="post" action="index.php" id="connect-form">
+    	
     	<?php if($error) { ?>
 			<p class="error"><?= $error ?></p>
     	<?php } ?>
+
         <h3>Connexion MaBanque</h3>
 
         <br>
